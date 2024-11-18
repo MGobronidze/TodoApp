@@ -1,15 +1,20 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './App.css';
 
 function App() {
-  const [todos, setTodos] = useState([]);  // State to store the to-do items
+  const [todos, setTodos] =useState(JSON.parse(localStorage.getItem('todos')) || []);  // State to store the to-do items
   const [task, setTask] = useState('');    // State to track the input field
+
+  useEffect(() => {
+    localStorage.setItem('todos', JSON.stringify(todos));
+  }, [todos]);
 
   // Function to add a new task to the list
   const addTask = () => {
     if (task.trim()) {
       setTodos([...todos, { task, isCompleted: false }]);
       setTask('');  // Clear input field after adding
+      console.log(todos)
     }
   };
 
@@ -18,6 +23,7 @@ function App() {
     const newTodos = [...todos];
     newTodos[index].isCompleted = !newTodos[index].isCompleted;
     setTodos(newTodos);
+
   };
 
   // Function to delete a task
@@ -34,16 +40,17 @@ function App() {
           type="text"
           placeholder="Add a new task..."
           value={task}
-          onChange={(e) => setTask(e.target.value)}
+          onChange={(e) => setTask(e.target.value) }
         />
+        {/* აქედან გავაგრძელოთ */}
         <button onClick={addTask}>Add</button>
       </div>
       <div className="todo-list">
         {todos.map((todo, index) => (
-          <div key={index} className={`todo-item ${todo.isCompleted ? 'completed' : ''}`}>
-            <span onClick={() => toggleComplete(index)}>{todo.task}</span>
-            <button onClick={() => deleteTask(index)}>Delete</button>
-          </div>
+            <div key={index} className={`todo-item ${todo.isCompleted ? 'completed' : ''}`}>
+              <span onClick={() => toggleComplete(index)}>{todo.task}</span>
+              <button onClick={() => deleteTask(index)}>Delete</button>
+            </div>
         ))}
       </div>
     </div>
